@@ -19,7 +19,7 @@ namespace API.Controllers
         private readonly IMapper _mapper;
         private readonly IPhotoService _photoService;
 
-        public UsersController(IUserRepository userRepository, IMapper mapper, 
+        public UsersController(IUserRepository userRepository, IMapper mapper,
         IPhotoService photoService)
         {
             _photoService = photoService;
@@ -28,7 +28,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery]UserParams userParams)
+        public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
         {
             var currentUser = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
             userParams.CurrentUsername = currentUser.UserName;
@@ -56,7 +56,7 @@ namespace API.Controllers
         {
             var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
 
-            if(user == null) return NotFound();
+            if (user == null) return NotFound();
 
             _mapper.Map(memberUpdateDto, user);
 
@@ -88,7 +88,7 @@ namespace API.Controllers
 
             if (await _userRepository.SaveAllAsync())
             {
-                return CreatedAtAction(nameof(GetUser), new {username = user.UserName}, _mapper.Map<PhotoDto>(photo));
+                return CreatedAtAction(nameof(GetUser), new { username = user.UserName }, _mapper.Map<PhotoDto>(photo));
             };
 
             return BadRequest("Problem adding photo");
@@ -107,7 +107,7 @@ namespace API.Controllers
 
             if (photo.IsMain) return BadRequest("This is already your main photo");
 
-            var currentMain = user.Photos.FirstOrDefault(x=> x.IsMain);
+            var currentMain = user.Photos.FirstOrDefault(x => x.IsMain);
             if (currentMain != null) currentMain.IsMain = false;
             photo.IsMain = true;
 
@@ -117,7 +117,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("delete-photo/{photoId}")]
-        public async Task<ActionResult> DeletePhoto(int photoId) 
+        public async Task<ActionResult> DeletePhoto(int photoId)
         {
             var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
 
